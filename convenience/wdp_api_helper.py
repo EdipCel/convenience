@@ -85,9 +85,9 @@ def read_wdp_api_xml(xml_file: str) -> tuple[str, str]:
             username = xml.split('<S N="UserName">')[1].split("</S>")[0]
             password_secure_string = xml.split('<SS N="Password">')[1].split("</SS>")[0]
 
-    except Exception as ex:
-        console.log("Could not read auth xml file.")
-        raise ex
+    except FileNotFoundError as ex:
+        print('File not found')
+        print(ex.message)
     else:
         # CryptUnprotectDate returns two values, description and the password,
         # we dont care about the description, so we use _ as variable name.

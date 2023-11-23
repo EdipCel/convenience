@@ -24,12 +24,23 @@ class Logger:
 
     _current_config = Config()
 
-    _is_logging_enabled = bool(_current_config.get_setting_value("logging", "enabled"))
+    try:
 
-    if _is_logging_enabled:
-        _file_name = _current_config.get_setting_value("logging", "file_name")
-    else:
-        _file_name = None
+        _is_logging_enabled = bool(_current_config.get_setting_value("logging", "enabled"))
+
+        if _is_logging_enabled:
+            _file_name = _current_config.get_setting_value("logging", "file_name")
+        else:
+            _file_name = None
+    except Exception as exc:
+        print("""Check if logging section exists in the ini file.
+              Sample section below:
+                [logging]
+                enabled = True
+                file_name = log.txt
+                db_log_table = process_logs
+              """)
+        print(exc.message)
 
     def __init__(
         self, logger_name="process", logging_level=logging.DEBUG, file_name=_file_name
@@ -84,7 +95,7 @@ class Logger:
                 )
         except Exception as exc:
             msg = " An exception occured while logging the current exception to the log table in the database."
-            send_activity_email(msg + exc.message)
+            send_activity_email(msg + '/n ' + exc.message)
 
     def log_info(self, msg, db_log=False):
         """Log the msg in the ifo level.
